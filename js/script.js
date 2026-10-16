@@ -1,62 +1,128 @@
 document.addEventListener("DOMContentLoaded", () => {
-    //
-    const menuResponsivo = document.getElementById("menuResponsivo");
-    const navMenu = document.getElementById("nav-menu");
-    // Abre e fecha o menu responsivo
-    menuResponsivo.addEventListener("click", () => {
-      navMenu.classList.toggle("active");
+  //
+  const menuResponsivo = document.getElementById("menuResponsivo");
+  const navMenu = document.getElementById("nav-menu");
+  // Abre e fecha o menu responsivo
+  menuResponsivo.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
+  });
+  // Fecha o menu ao clicar em um link
+  const navLinks = document.querySelectorAll(".nav-menu a");
+  navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      navMenu.classList.remove("active");
     });
-    // Fecha o menu ao clicar em um link
-    const navLinks = document.querySelectorAll(".nav-menu a");
-    navLinks.forEach((link) => {
-      link.addEventListener("click", () => {
-        navMenu.classList.remove("active");
-      });
-    });
-    const slides = document.querySelectorAll(".carousel-slide");
-    const dots = document.querySelectorAll(".dot");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    let slideAtual = 0;
-    let slideIntervalo;
-  
-  
-    function showSlide(index) {
-      slides.forEach((slide) => slide.classList.remove("active"));
-      dots.forEach((dot) => dot.classList.remove("active"));
-  
-  
-      slideAtual = (index + slides.length) % slides.length;
-  
-  
-      slides[slideAtual].classList.add("active");
-      dots[slideAtual].classList.add("active");
-    }
-  
-  
-    function nextSlide() {
-      showSlide(slideAtual + 1);
-    }
-    function prevSlide() {
-      showSlide(slideAtual - 1);
-    }
-    function startSlide() {
-      slideIntervalo = setInterval(nextSlide, 5000);
-    }
-    function stopSlide() {
-      console.log("Valor intervalo", slideIntervalo);
-      clearInterval(slideIntervalo);
-    }
-    nextBtn.addEventListener("click", () => {
-      nextSlide();
-      stopSlide();
-      startSlide();
-    });
-    prevBtn.addEventListener("click", () => {
-      prevSlide();
-      stopSlide();
-      startSlide();
-    });
+  });
+  const slides = document.querySelectorAll(".carousel-slide");
+  const dots = document.querySelectorAll(".dot");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  let slideAtual = 0;
+  let slideIntervalo;
+
+
+  function showSlide(index) {
+    slides.forEach((slide) => slide.classList.remove("active"));
+    dots.forEach((dot) => dot.classList.remove("active"));
+
+
+    slideAtual = (index + slides.length) % slides.length;
+
+
+    slides[slideAtual].classList.add("active");
+    dots[slideAtual].classList.add("active");
+  }
+  function nextSlide() {
+    showSlide(slideAtual + 1);
+  }
+  function prevSlide() {
+    showSlide(slideAtual - 1);
+  }
+  function startSlide() {
+    slideIntervalo = setInterval(nextSlide, 5000);
+  }
+  function stopSlide() {
+    console.log("Valor intervalo", slideIntervalo);
+    clearInterval(slideIntervalo);
+  }
+  nextBtn.addEventListener("click", () => {
+    nextSlide();
+    stopSlide();
     startSlide();
-  }); // Final do evento
-  
+  });
+  prevBtn.addEventListener("click", () => {
+    prevSlide();
+    stopSlide();
+    startSlide();
+  });
+  dots.forEach((dot) =>{
+    dot.addEventListener("click", (e) => {
+      const index = parseInt(e.target.getAttribute("data-index"));
+      showSlide(index);
+      stopSlide();
+      startSlide();
+    });
+  });
+  startSlide();
+
+
+  //Validação do Formulário
+  const contatoForm = document.getElementById("contatoForm");
+  const nome = document.getElementById("nome");
+  const email = document.getElementById("email");
+  const mensagem = document.getElementById("mensagem");
+
+
+  function isValidEmail(email){
+    const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.[a-z]?$/i;
+    return emailRegex.test(email);
+  };
+
+
+  contatoForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+
+    let isValid = true;
+
+
+    //Validação campo nome (verificar mínimo 3 caracteres)
+    if(nome.value.trim().length < 3){
+      showError(nome, "O nome deve ter no mínimo 3 caracteres");
+      isValid = false;
+    };
+    //Validação campo email
+    if(!isValidEmail(email.value.trim())){
+      showError(email, "Insira um email valido");
+      let isValid = false;
+    };
+    //Validação campo mensagem (mínimo 10 caracteres)
+    if(mensagem.value.trim().length < 10){
+      showError(mensagem, "A mensagem deve ter no mínimo 10 caracteres");
+      isValid = false;
+    };
+
+
+    if(isValid){
+      clearError();
+      alert("Mensagem enviada com sucesso");
+      contatoForm.reset();
+    };
+  });
+
+
+  function showError(inputElement, menssagem){
+    const formGroup = inputElement.parentElement;
+
+
+    inputElement.classList.add("input-error");
+
+
+    const errorMensagem = document.createElement("small");
+    errorMensagem.className = "error-text";
+    errorMensagem.innerText = menssagem;
+    formGroup.appendChild(errorMensagem);
+  };
+
+
+}); // Final do evento  
